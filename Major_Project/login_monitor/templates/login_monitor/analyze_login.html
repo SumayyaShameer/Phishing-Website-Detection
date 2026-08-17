@@ -1,0 +1,333 @@
+{% extends 'login_monitor/base.html' %}
+
+{% block content %}
+
+<div class="card" style="max-width:800px; margin:auto;">
+
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:30px;">
+
+        <div style="
+            font-size:42px;
+            margin-bottom:10px;
+        ">
+            🤖
+        </div>
+
+        <h1 style="margin-bottom:10px;">
+            Login Risk Analyzer
+        </h1>
+
+        <p style="
+            color:#64748b;
+            font-size:16px;
+            line-height:1.6;
+            max-width:650px;
+            margin:auto;
+        ">
+            Analyze user login behaviour using the trained
+            <strong>Random Forest</strong> machine learning model
+            to identify normal and suspicious authentication activity.
+        </p>
+
+    </div>
+
+
+    <!-- Input Section -->
+    <div style="
+        background:#f8fafc;
+        padding:25px;
+        border-radius:10px;
+        border:1px solid #e2e8f0;
+    ">
+
+        <h2 style="
+            margin-top:0;
+            color:#0f172a;
+        ">
+            🔍 Login Behaviour Details
+        </h2>
+
+        <p style="
+            color:#64748b;
+            margin-bottom:25px;
+        ">
+            Enter the login characteristics to perform security analysis.
+        </p>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- Login Hour -->
+            <label>
+                <strong>Login Hour (0 - 23)</strong>
+            </label>
+
+            <input
+                type="number"
+                name="login_hour"
+                min="0"
+                max="23"
+                placeholder="Example: 19"
+                required
+            >
+
+
+            <!-- Day -->
+            <label>
+                <strong>Day of Week</strong>
+            </label>
+
+            <select
+                name="day_of_week"
+                required
+                style="
+                    width:100%;
+                    padding:11px;
+                    margin:6px 0 18px;
+                    border:1px solid #cbd5e1;
+                    border-radius:6px;
+                    background:white;
+                    font-size:15px;
+                "
+            >
+
+                <option value="0">Monday</option>
+                <option value="1">Tuesday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Thursday</option>
+                <option value="4">Friday</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
+
+            </select>
+
+
+            <!-- Frequency -->
+            <label>
+                <strong>Login Frequency (1 - 10)</strong>
+            </label>
+
+            <input
+                type="number"
+                name="login_frequency"
+                min="1"
+                max="10"
+                placeholder="Example: 3"
+                required
+            >
+
+
+            <!-- Authentication -->
+            <label>
+                <strong>Authentication Status</strong>
+            </label>
+
+            <select
+                name="login_status"
+                required
+                style="
+                    width:100%;
+                    padding:11px;
+                    margin:6px 0 18px;
+                    border:1px solid #cbd5e1;
+                    border-radius:6px;
+                    background:white;
+                    font-size:15px;
+                "
+            >
+
+                <option value="1">
+                    Successful
+                </option>
+
+                <option value="0">
+                    Failed
+                </option>
+
+            </select>
+
+
+            <!-- Network -->
+            <label>
+                <strong>Network / IP Status</strong>
+            </label>
+
+            <select
+                name="ip_risk"
+                required
+                style="
+                    width:100%;
+                    padding:11px;
+                    margin:6px 0 22px;
+                    border:1px solid #cbd5e1;
+                    border-radius:6px;
+                    background:white;
+                    font-size:15px;
+                "
+            >
+
+                <option value="0">
+                    Known / Normal Network
+                </option>
+
+                <option value="1">
+                    Unknown / Unusual Network
+                </option>
+
+            </select>
+
+
+            <button
+                class="btn"
+                type="submit"
+                style="
+                    width:100%;
+                    font-size:16px;
+                    padding:14px;
+                "
+            >
+                🔎 Analyze Login Behaviour
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Prediction Result -->
+
+    {% if result %}
+
+        <div style="margin-top:35px;">
+
+            <div style="text-align:center;">
+
+                <h2>
+                    Machine Learning Prediction
+                </h2>
+
+                <p style="color:#64748b;">
+                    Random Forest classification result
+                </p>
+
+            </div>
+
+
+            {% if result == 'Suspicious' %}
+
+                <!-- Suspicious Result -->
+
+                <div style="
+                    padding:25px;
+                    background:#fef2f2;
+                    border:2px solid #ef4444;
+                    border-radius:12px;
+                    text-align:center;
+                ">
+
+                    <div style="
+                        font-size:40px;
+                        margin-bottom:10px;
+                    ">
+                        🚨
+                    </div>
+
+                    <div style="
+                        color:#b91c1c;
+                        font-size:24px;
+                        font-weight:bold;
+                    ">
+                        SUSPICIOUS LOGIN DETECTED
+                    </div>
+
+                    <p style="
+                        color:#7f1d1d;
+                        margin-bottom:0;
+                        line-height:1.6;
+                    ">
+                        The entered login behaviour shows unusual
+                        characteristics and has been classified as
+                        <strong>suspicious</strong> by the Random Forest model.
+                    </p>
+
+                </div>
+
+
+            {% else %}
+
+                <!-- Normal Result -->
+
+                <div style="
+                    padding:25px;
+                    background:#f0fdf4;
+                    border:2px solid #22c55e;
+                    border-radius:12px;
+                    text-align:center;
+                ">
+
+                    <div style="
+                        font-size:40px;
+                        margin-bottom:10px;
+                    ">
+                        🛡️
+                    </div>
+
+                    <div style="
+                        color:#15803d;
+                        font-size:24px;
+                        font-weight:bold;
+                    ">
+                        NORMAL LOGIN
+                    </div>
+
+                    <p style="
+                        color:#166534;
+                        margin-bottom:0;
+                        line-height:1.6;
+                    ">
+                        The entered login behaviour is consistent with
+                        normal authentication activity.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- Analysis Summary -->
+
+            <div style="
+                margin-top:25px;
+                padding:20px;
+                background:#f8fafc;
+                border-radius:10px;
+                border:1px solid #e2e8f0;
+            ">
+
+                <h3 style="margin-top:0;">
+                    🧠 Analysis Summary
+                </h3>
+
+                <p style="
+                    color:#64748b;
+                    line-height:1.6;
+                    margin-bottom:0;
+                ">
+                    The Random Forest model evaluates the submitted
+                    login behaviour features and classifies the activity
+                    as either normal or suspicious.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
